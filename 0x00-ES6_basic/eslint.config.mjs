@@ -42,6 +42,13 @@ export default [
       ...es6Rules.rules,
       ...importsRules.rules,
       ...strictRules.rules,
+  //     'import/extensions': [
+  //   'error',
+  //   'always', // or 'never' to disallow extensions
+  //   {
+  //     js: 'always', // Set to 'always' to allow the use of .js extensions
+  //   },
+  // ],
       
       // Your custom rules
       "no-console": "off",
