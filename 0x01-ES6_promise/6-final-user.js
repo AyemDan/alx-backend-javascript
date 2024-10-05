@@ -8,8 +8,9 @@ export default function handleProfileSignup(firstName, lastName, fileName) {
       results.forEach((result) => {
         processedResults.push({
           status: result.status,
-          value: result.value 
+          value: result.value,
+        });
+        return processedResults;
       });
-      return processedResults;
     });
 }
