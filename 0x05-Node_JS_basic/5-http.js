@@ -62,6 +62,7 @@ const app = http.createServer(async (req, res) => {
 
       if (students) {
         res.end(`This is the list of our students\n${students}`);
+        res.statusCode = 200;
       } else {
         res.statusCode = 500;
         res.end('Cannot load the student data properly');
