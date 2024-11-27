@@ -5,8 +5,10 @@ function countStudents(path) {
     if (!path || !fs.existsSync(path)) {
       throw new Error('Cannot load the database');
     }
+
     const data = fs.readFileSync(path, { encoding: 'utf8', flag: 'r' }).trim();
     const rows = data.split('\n').filter((row) => row.trim() !== '');
+
     if (rows.length === 0) {
       throw new Error('File is invalid');
     }
@@ -29,11 +31,12 @@ function countStudents(path) {
     }, {});
 
     console.log(`Number of students: ${numOfStudents}`);
+
     Object.entries(studentsByField).forEach(([field, names]) => {
       console.log(`Number of students in ${field}: ${names.length}. List: ${names.join(', ')}`);
     });
   } catch (err) {
-    console.error(err);
+    throw new Error('Cannot load the database')
   }
 }
 
