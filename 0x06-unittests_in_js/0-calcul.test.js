@@ -2,7 +2,6 @@ const assert = require('assert');
 const calculateNumber = require('./0-calcul');
 
 describe('calculateNumber function', () => {
-  
   // Test: rounding positive numbers
   it('should round 1.2 and 2.8 to 1 and 3, then return the sum of 4', () => {
     assert.strictEqual(calculateNumber(1.2, 2.8), 4);
@@ -37,6 +36,4 @@ describe('calculateNumber function', () => {
   it('should round 1000000.5 and 1000000.4 to 1000001 and 1000000, then return the sum of 2000001', () => {
     assert.strictEqual(calculateNumber(1000000.5, 1000000.4), 2000001);
   });
-
 });
-

@@ -2,7 +2,6 @@ const { expect } = require('chai');
 const calculateNumber = require('./2-calcul_chai');
 
 describe('calculateNumber function', () => {
-
   // Test SUM operation
   describe('SUM operation', () => {
     it('should round 1.2 and 2.8 to 1 and 3, then return the sum of 4', () => {

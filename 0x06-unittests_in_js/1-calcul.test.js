@@ -2,7 +2,6 @@ const assert = require('assert');
 const calculateNumber = require('./1-calcul');
 
 describe('calculateNumber function', () => {
-
   // Test SUM operation
   describe('SUM operation', () => {
     it('should round 1.2 and 2.8 to 1 and 3, then return the sum of 4', () => {
