@@ -19,14 +19,13 @@ class StudentsController {
       let responseMessage = 'This is the list of our students\n';
 
       for (const field in fields) {
-        if (Object.prototype.hasOwnProperty.call(fields, field)) { // Safely checking property
-          const studentList = fields[field];
-          responseMessage += `Number of students in ${field}: ${studentList.length}. List: ${studentList.join(', ')}\n`;
-        }
+        const studentList = fields[field];
+        responseMessage += `Number of students in ${field}: ${studentList.length}. List: ${studentList.join(', ')}\n`;
       }
 
       response.status(200).send(responseMessage);
     } catch (error) {
+      console.log(error);
       response.status(500).send('Cannot load the database');
     }
   }
