@@ -1,4 +1,3 @@
-// full_server/utils.js
 const fs = require('fs').promises;
 
 async function readDatabase(filePath) {
@@ -14,14 +13,14 @@ async function readDatabase(filePath) {
     const row = rows.map((row) => row.split(',').map((r) => r.trim()));
 
     const dictionary = row.map((r) => r.reduce((acc, value, index) => {
-      const newObj = { ...acc }; // Create a new object to avoid direct mutation
+      const newObj = { ...acc };
       newObj[headers[index]] = value;
       return newObj;
     }, {}));
 
     return dictionary;
   } catch (err) {
-    throw new Error('Invalid');
+    throw new Error('Cannot load the database');
   }
 }
 
