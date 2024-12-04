@@ -1,84 +1,70 @@
 const http = require('http');
-const fs = require('fs').promises;
+const { readFile } = require('fs');
 
-async function countStudents(path) {
-  try {
-    // Attempt to read the file asynchronously
-    const data = await fs.readFile(path, { encoding: 'utf8' });
+const hostname = '127.0.0.1';
+const port = 1245;
 
-    const rows = data.trim().split('\n').filter((row) => row.trim() !== '');
-
-    if (rows.length === 0) {
-      throw new Error('Cannot load the database');
-    }
-
-    const fields = rows[0].split(',').map((header) => header.trim());
-
-    // Extract student data (remaining rows)
-    const students = rows.slice(1).map((row) => row.split(',').map((cell) => cell.trim()));
-
-    // Map students to objects
-    const studentObj = students.map((student) => fields.reduce((newObj, key, index) => (
-      { ...newObj, [key]: student[index] }), {}));
-
-    const numOfStudents = studentObj.length;
-
-    const studentsByField = studentObj.reduce((acc, student) => {
-      const { field, firstname } = student;
-      if (!acc[field]) {
-        acc[field] = [];
+function countStudents(fileName) {
+  const students = {};
+  const fields = {};
+  let length = 0;
+  return new Promise((resolve, reject) => {
+    readFile(fileName, (err, data) => {
+      if (err) {
+        reject(err);
+      } else {
+        let output = '';
+        const lines = data.toString().split('\n');
+        for (let i = 0; i < lines.length; i += 1) {
+          if (lines[i]) {
+            length += 1;
+            const field = lines[i].toString().split(',');
+            if (Object.prototype.hasOwnProperty.call(students, field[3])) {
+              students[field[3]].push(field[0]);
+            } else {
+              students[field[3]] = [field[0]];
+            }
+            if (Object.prototype.hasOwnProperty.call(fields, field[3])) {
+              fields[field[3]] += 1;
+            } else {
+              fields[field[3]] = 1;
+            }
+          }
+        }
+        const l = length - 1;
+        output += `Number of students: ${l}\n`;
+        for (const [key, value] of Object.entries(fields)) {
+          if (key !== 'field') {
+            output += `Number of students in ${key}: ${value}. `;
+            output += `List: ${students[key].join(', ')}\n`;
+          }
+        }
+        resolve(output);
       }
-      acc[field].push(firstname);
-      return acc;
-    }, {});
-
-    let responseContent = `Number of students: ${numOfStudents}\n`;
-    Object.entries(studentsByField).forEach(([field, names]) => {
-      responseContent += `Number of students in ${field}: ${names.length}. List: ${names.join(', ')}\n`;
     });
-    return responseContent;
-  } catch (err) {
-    // If there's an error, log it and reject the promise
-    throw new Error('Cannot load the database');
-  }
+  });
 }
 
-const app = http.createServer(async (req, res) => {
-  res.setHeader('Content-Type', 'text/plain');
-
-  if (req.url === '/') {
-    res.end('Hello Holberton School!');
-  } else if (req.url === '/students') {
-    const dbFilePath = process.argv[2];
-
-    if (!dbFilePath) {
-      res.statusCode = 400;
-      res.end('Database file path missing');
-      return;
-    }
-
-    try {
-      const students = await countStudents(dbFilePath);
-
-      if (students) {
-        res.end(`This is the list of our students\n${students}`);
-        res.statusCode = 200;
-      } else {
-        res.statusCode = 500;
-        res.end('Cannot load the student data properly');
-      }
-    } catch (err) {
-      res.statusCode = 500;
-      res.end('Cannot load the database');
-    }
-  } else {
-    res.statusCode = 404;
-    res.end('Not Found');
+const app = http.createServer((request, response) => {
+  response.statusCode = 200;
+  response.setHeader('Content-Type', 'text/plain');
+  if (request.url === '/') {
+    response.write('Hello Holberton School!');
+    response.end();
+  }
+  if (request.url === '/students') {
+    response.write('This is the list of our students\n');
+    countStudents(process.argv[2].toString()).then((output) => {
+      const outString = output.slice(0, -1);
+      response.end(outString);
+    }).catch(() => {
+      response.statusCode = 404;
+      response.end('Cannot load the database');
+    });
   }
 });
 
-app.listen(1245, () => {
-  console.log('Server is listening on port 1245');
+app.listen(port, hostname, () => {
 });
 
 module.exports = app;
